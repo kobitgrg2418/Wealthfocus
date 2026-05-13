@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvn -q -DskipTests compile)",
+      "PowerShell(mvn -v)",
+      "PowerShell($wmi = Get-WmiObject Win32_Process -Filter \"ProcessId=25624\"; $wmi.CommandLine)",
+      "PowerShell($tomcatBase = \"C:\\\\Users\\\\ACER NITRO\\\\AppData\\\\Local\\\\JetBrains\\\\IntelliJIdea2026.1\\\\tomcat\\\\aa3c778a-2ff7-44a5-a231-7da51e23ac3f\"; Get-Content \"$tomcatBase\\\\conf\\\\server.xml\" | Select-String \"Connector\" | Select-Object -First 5)",
+      "Bash(dir \"C:\\\\Users\\\\ACER NITRO\\\\AppData\\\\Local\\\\JetBrains\\\\IntelliJIdea2026.1\\\\tomcat\\\\aa3c778a-2ff7-44a5-a231-7da51e23ac3f\\\\logs\\\\\")",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\ACER NITRO\\\\OneDrive\\\\Desktop\\\\Wealthfocus-\\\\target\\\\wealthfocus\\\\WEB-INF\\\\lib\" -ErrorAction SilentlyContinue | ForEach-Object { $_.Name })",
+      "PowerShell($src = Get-Item \"C:\\\\Users\\\\ACER NITRO\\\\OneDrive\\\\Desktop\\\\Wealthfocus-\\\\src\\\\main\\\\java\\\\com\\\\wealthfocus\\\\service\\\\AuthService.java\"; $tgt = Get-Item \"C:\\\\Users\\\\ACER NITRO\\\\OneDrive\\\\Desktop\\\\Wealthfocus-\\\\target\\\\wealthfocus\\\\WEB-INF\\\\classes\\\\com\\\\wealthfocus\\\\service\\\\AuthService.class\"; Write-Output \"Source: $\\($src.LastWriteTime\\)\"; Write-Output \"Target: $\\($tgt.LastWriteTime\\)\")"
+    ]
+  }
+}

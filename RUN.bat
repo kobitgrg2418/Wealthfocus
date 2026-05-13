@@ -32,15 +32,9 @@ if errorlevel 1 (
     exit /b 1
 )
 
-REM Check if we're in the right directory
-if exist pom.xml (
-    echo Found pom.xml in current directory
-) else if exist java-version\pom.xml (
-    echo Changing to java-version directory...
-    cd java-version
-) else (
+if not exist pom.xml (
     echo ERROR: Cannot find pom.xml!
-    echo Please run this script from the project root or java-version directory
+    echo Please run this script from the project root.
     pause
     exit /b 1
 )
@@ -59,9 +53,7 @@ if errorlevel 1 (
     echo.
     set /p SETUP="Do you want to run database setup now? (Y/N): "
     if /i "%SETUP%"=="Y" (
-        cd ..
         call setup-database.bat
-        cd java-version
     ) else (
         echo.
         echo Please run setup-database.bat before starting the application.
@@ -80,6 +72,6 @@ echo.
 echo Press Ctrl+C to stop the server
 echo.
 
-mvn tomcat7:run
+mvn cargo:run
 
 pause

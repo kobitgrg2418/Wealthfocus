@@ -5,16 +5,18 @@ import com.wealthfocus.dao.ExpenseDAO;
 import com.wealthfocus.dao.IncomeDAO;
 import com.wealthfocus.model.Recommendation;
 import com.wealthfocus.service.FinanceService;
+import com.wealthfocus.util.SessionManager;
 import com.wealthfocus.util.TimeRangeUtil;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @WebServlet("/advice")
 public class InvestmentServlet extends HttpServlet {
@@ -27,7 +29,17 @@ public class InvestmentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            String userId = InitServlet.DEFAULT_USER_ID;
+            // Retrieve user ID from session
+            Optional<String> userIdOpt = SessionManager.getUserId(req.getSession());
+            
+            // Handle edge case where user ID is not in session
+            // This should not occur due to AuthenticationFilter, but handle gracefully
+            if (!userIdOpt.isPresent()) {
+                resp.sendRedirect(req.getContextPath() + "/login");
+                return;
+            }
+            
+            String userId = userIdOpt.get();
             TimeRangeUtil.Range r = TimeRangeUtil.get(req.getParameter("period"));
             BigDecimal income = incomeDAO.sumByUserAndRange(userId, r.start, r.end);
             BigDecimal expense = expenseDAO.sumByUserAndRange(userId, r.start, r.end);

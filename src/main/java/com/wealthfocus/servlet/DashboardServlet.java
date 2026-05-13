@@ -9,13 +9,14 @@ import com.wealthfocus.model.Expense;
 import com.wealthfocus.model.Income;
 import com.wealthfocus.service.FinanceService;
 import com.wealthfocus.util.Money;
+import com.wealthfocus.util.SessionManager;
 import com.wealthfocus.util.TimeRangeUtil;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @WebServlet(urlPatterns = { "/", "/dashboard" })
 public class DashboardServlet extends HttpServlet {
@@ -37,7 +39,17 @@ public class DashboardServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         try {
-            String userId = InitServlet.DEFAULT_USER_ID;
+            // Retrieve user ID from session
+            Optional<String> userIdOpt = SessionManager.getUserId(req.getSession());
+            
+            // Handle edge case where user ID is not in session
+            // This should not occur due to AuthenticationFilter, but handle gracefully
+            if (!userIdOpt.isPresent()) {
+                resp.sendRedirect(req.getContextPath() + "/login");
+                return;
+            }
+            
+            String userId = userIdOpt.get();
             String preset = req.getParameter("period");
             TimeRangeUtil.Range range = TimeRangeUtil.get(preset);
 

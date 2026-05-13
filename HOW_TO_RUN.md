@@ -36,11 +36,15 @@ This script will:
 ### Method 3: Manual Maven Command
 
 ```bash
-cd java-version
-mvn tomcat7:run
+mvn cargo:run
 ```
 
 Then open: http://localhost:8080/
+
+> The project uses `jakarta.servlet 6.0`, so it must run on **Tomcat 10+**.
+> The `cargo-maven3-plugin` launches an embedded Tomcat 10 for local dev.
+> To build a deployable WAR for an external Tomcat 10 server, run `mvn package`
+> and drop `target/wealthfocus.war` into Tomcat's `webapps/` directory.
 
 ---
 

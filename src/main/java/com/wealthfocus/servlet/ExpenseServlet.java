@@ -1,15 +1,17 @@
 package com.wealthfocus.servlet;
 
 import com.wealthfocus.dao.ExpenseDAO;
+import com.wealthfocus.util.SessionManager;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @WebServlet(urlPatterns = { "/expense/add", "/expense/delete" })
 public class ExpenseServlet extends HttpServlet {
@@ -20,7 +22,18 @@ public class ExpenseServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         String path = req.getServletPath();
-        String userId = InitServlet.DEFAULT_USER_ID;
+        
+        // Retrieve user ID from session
+        Optional<String> userIdOpt = SessionManager.getUserId(req.getSession());
+        
+        // Handle edge case where user ID is not in session
+        // This should not occur due to AuthenticationFilter, but handle gracefully
+        if (!userIdOpt.isPresent()) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+        
+        String userId = userIdOpt.get();
         try {
             if ("/expense/add".equals(path)) {
                 BigDecimal amount = new BigDecimal(req.getParameter("amount"));

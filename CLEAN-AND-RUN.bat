@@ -4,14 +4,8 @@ echo   WealthFocus - Clean Build and Run
 echo ========================================
 echo.
 
-REM Check if we're in the right directory
-if exist pom.xml (
-    echo Found pom.xml in current directory
-) else if exist java-version\pom.xml (
-    echo Changing to java-version directory...
-    cd java-version
-) else (
-    echo ERROR: Cannot find pom.xml!
+if not exist pom.xml (
+    echo ERROR: Cannot find pom.xml in current directory!
     pause
     exit /b 1
 )
@@ -26,11 +20,8 @@ call mvn compile
 
 echo.
 echo ========================================
-echo   Starting Tomcat 7 (Embedded)
+echo   Starting embedded Tomcat 10 (Cargo)
 echo ========================================
-echo.
-echo IMPORTANT: This will use the embedded Tomcat 7
-echo NOT your installed Tomcat 10
 echo.
 echo Once started, open your browser to:
 echo   http://localhost:8080/
@@ -38,6 +29,6 @@ echo.
 echo Press Ctrl+C to stop the server
 echo.
 
-mvn tomcat7:run
+mvn cargo:run
 
 pause

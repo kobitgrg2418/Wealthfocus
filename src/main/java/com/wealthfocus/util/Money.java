@@ -17,8 +17,8 @@ public class Money {
     }
 
     public static String formatNPR(BigDecimal amount) {
-        if (amount == null) return "रू 0.00";
-        return "रू " + FMT.format(amount.abs());
+        if (amount == null) return "Rs 0.00";
+        return "Rs " + FMT.format(amount.abs());
     }
 
     public static String formatNPR(double amount) {
@@ -26,7 +26,7 @@ public class Money {
     }
 
     public static String formatSigned(BigDecimal amount) {
-        if (amount == null) return "रू 0.00";
+        if (amount == null) return "Rs 0.00";
         String sign = amount.signum() < 0 ? "-" : amount.signum() > 0 ? "+" : "";
         return sign + formatNPR(amount);
     }

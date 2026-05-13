@@ -1,29 +1,28 @@
 -- WealthFocus Database Setup - Complete Script
 -- Run this file to create all tables and seed default data
+--   mysql -u root -p < database/setup-database.sql
 
--- Create database if it doesn't exist
 CREATE DATABASE IF NOT EXISTS wealthfocus;
 USE wealthfocus;
 
 -- ============================================
--- 1. Create users table
+-- 1. users (with authentication support)
 -- ============================================
 CREATE TABLE IF NOT EXISTS users (
   id VARCHAR(36) PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
   name VARCHAR(255) NOT NULL,
+  password_hash VARCHAR(255) NULL,
+  phone VARCHAR(20) NULL,
+  address VARCHAR(500) NULL,
+  photo_path VARCHAR(255) NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX idx_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insert default user for Java version
-INSERT INTO users (id, email, name) 
-VALUES ('default-user-id', 'jhon@wealthfocus.com', 'Jhon')
-ON DUPLICATE KEY UPDATE name=name;
-
 -- ============================================
--- 2. Create categories table
+-- 2. categories
 -- ============================================
 CREATE TABLE IF NOT EXISTS categories (
   id VARCHAR(36) PRIMARY KEY,
@@ -36,18 +35,19 @@ CREATE TABLE IF NOT EXISTS categories (
   UNIQUE KEY unique_user_category (user_id, name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insert default categories
+-- Seed shared default categories (user_id = NULL → visible to every user).
+-- CategoryDAO.findAvailable returns rows where user_id IS NULL OR user_id = ?
 INSERT INTO categories (id, name, is_default, user_id) VALUES
-  (UUID(), 'Groceries', TRUE, 'default-user-id'),
-  (UUID(), 'Utilities', TRUE, 'default-user-id'),
-  (UUID(), 'Entertainment', TRUE, 'default-user-id'),
-  (UUID(), 'Transportation', TRUE, 'default-user-id'),
-  (UUID(), 'Healthcare', TRUE, 'default-user-id'),
-  (UUID(), 'Housing', TRUE, 'default-user-id')
-ON DUPLICATE KEY UPDATE name=name;
+  (UUID(), 'Groceries',      TRUE, NULL),
+  (UUID(), 'Utilities',      TRUE, NULL),
+  (UUID(), 'Entertainment',  TRUE, NULL),
+  (UUID(), 'Transportation', TRUE, NULL),
+  (UUID(), 'Healthcare',     TRUE, NULL),
+  (UUID(), 'Housing',        TRUE, NULL)
+ON DUPLICATE KEY UPDATE name = VALUES(name);
 
 -- ============================================
--- 3. Create incomes table
+-- 3. incomes
 -- ============================================
 CREATE TABLE IF NOT EXISTS incomes (
   id VARCHAR(36) PRIMARY KEY,
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS incomes (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================
--- 4. Create expenses table
+-- 4. expenses
 -- ============================================
 CREATE TABLE IF NOT EXISTS expenses (
   id VARCHAR(36) PRIMARY KEY,
